@@ -1,0 +1,13 @@
+{
+  "name": "raincheck-workshop",
+  "version": "0.1.0",
+  "description": "Turn a cancelled workshop into confirmed rebookings and settled refunds.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.5" },
+  "scripts": {
+    "start": "node --use-env-proxy src/server.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "license": "MIT"
+}

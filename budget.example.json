@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "inputUsdPerMillion": 0.3,
+  "outputUsdPerMillion": 0.9,
+  "approvedUsd": 0,
+  "confirmedCreditsUsd": 0,
+  "creditReserveUsd": 0,
+  "expiresAt": "1970-01-01T00:00:00Z",
+  "maxOutputTokens": 12000,
+  "reservedMicroUsd": 0,
+  "requests": 0
+}
