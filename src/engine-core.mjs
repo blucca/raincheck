@@ -122,7 +122,8 @@ export class Raincheck {
           receipt = await this.payments.refund(item.operation, options);
         }
         if (!receipt?.id || receipt.amount !== item.operation.amount || receipt.currency !== item.operation.currency ||
-            receipt.capture_id !== item.operation.capture_id) {
+            receipt.capture_id !== item.operation.capture_id ||
+            (this.payments.mode === 'sandbox' && receipt.custom_id !== item.operation.request_id)) {
           throw new DomainError('receipt_mismatch', 'Review the payment receipt: its capture, currency, and amount must match the saved operation.');
         }
       } catch (error) {

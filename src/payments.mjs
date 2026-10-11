@@ -25,7 +25,7 @@ export class SimulatedPayments {
       }
       return this.store.put('provider_refund', operation.request_id, {
         id: `SIM-${randomUUID().slice(0, 12)}`, status: 'COMPLETED', amount: operation.amount,
-        currency: operation.currency, capture_id: operation.capture_id, request_id: operation.request_id, created_at: new Date().toISOString()
+        currency: operation.currency, capture_id: operation.capture_id, request_id: operation.request_id, custom_id: operation.request_id, created_at: new Date().toISOString()
       });
     });
     if (simulate_lost_response) throw new PaymentError('response_lost', 'The demo payment completed, then its response was interrupted. Recover with the saved request ID.');
@@ -84,7 +84,7 @@ export class PayPalSandboxPayments {
     const up = body?.links?.find(l => l.rel === 'up')?.href || '';
     const match = up.match(/^https:\/\/api(?:-m)?\.(?:sandbox\.)?paypal\.com\/v2\/payments\/captures\/([A-Za-z0-9]+)$/);
     return { id: body.id, status: body.status, amount: money(body.amount?.value), currency: body.amount?.currency_code,
-      capture_id: match?.[1] || null, created_at: body.create_time || null };
+      capture_id: match?.[1] || null, custom_id: body.custom_id || null, invoice_id: body.invoice_id || null, created_at: body.create_time || null };
   }
   async refund(operation) {
     if (!/^[A-Za-z0-9]{10,32}$/.test(operation.capture_id)) {
@@ -93,6 +93,7 @@ export class PayPalSandboxPayments {
     const payload = await this.request(`/v2/payments/captures/${operation.capture_id}/refund`, {
       method: 'POST', requestId: operation.request_id,
       body: { amount: { value: (operation.amount / 100).toFixed(2), currency_code: operation.currency },
+        custom_id: operation.request_id, invoice_id: `RC-${operation.request_id}`,
         note_to_payer: 'Workshop cancelled. Full ticket value refunded for the selected guests.' }
     });
     return this.normalize(payload);
