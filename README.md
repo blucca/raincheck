@@ -2,7 +2,7 @@
 
 **One cancelled workshop. A good next plan for every guest.**
 
-[**Try the interactive preview →**](https://blucca.github.io/raincheck/)
+[**Try the interactive preview →**](https://blucca.github.io/raincheck/) · [PayPal AI Hackathon entry](https://devpost.com/software/raincheck-l145bd)
 
 [**Watch the 105-second sandbox demo**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/Tj6nW_1W3TU) · Real PayPal sandbox APIs, live AI, one Sunday place and one $68 refund. [Recording notes](docs/sandbox-demo.md).
 

@@ -1,6 +1,6 @@
 # Raincheck — Devpost submission draft
 
-**PayPal AI Hackathon submission copy.** Prepared October 13, 2026. Project overview, story, video, and links have been saved to Devpost draft 1233915.
+**[Submitted to the PayPal AI Hackathon](https://devpost.com/software/raincheck-l145bd) on October 13, 2026.** Entry 1233915. The story, integration answers, and media below accompany the official entry.
 
 ## Project story
 
