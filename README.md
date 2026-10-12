@@ -55,7 +55,7 @@ Focused checks cover cancellation outcomes, restart recovery, seat capacity, exa
 
 The interpreter calls an OpenAI-compatible structured-output endpoint. The demonstrated model is **NVIDIA Nemotron 3 Super 120B A12B on Nebius Token Factory**.
 
-Copy `.env.example` to a private environment file, configure the `NEBIUS_*` values, and create a private budget from `budget.example.json`. Supply the account's confirmed credit allowance, chosen request cap, model prices, and expiry. Every model request reserves its maximum cost durably before HTTP. The sample budget starts inactive.
+Copy `.env.example` to a private environment file and configure the model values. Create two private budgets from `budget.example.json`: `NEBIUS_BUDGET_FILE` for the account-wide allowance and `RAINCHECK_BUDGET_FILE` for Raincheck's own cap. Supply the account's confirmed credit allowance, chosen caps, model prices, and expiry. Every model request reserves its maximum cost durably in both budgets before HTTP; missing or exhausted budgets stop the request. The sample budget starts inactive.
 
 ```sh
 node --use-env-proxy --env-file=/path/to/private/raincheck.env src/server.mjs

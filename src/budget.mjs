@@ -88,6 +88,13 @@ export function budgetStatus({ file } = {}) {
 
 const ceilPrice = (tokens, price) => (BigInt(tokens) * price.numerator + price.denominator - 1n) / price.denominator;
 
+export function reserveRaincheckBudget(args) {
+  const file = process.env.RAINCHECK_BUDGET_FILE;
+  if (!file?.trim()) throw new BudgetError('Set RAINCHECK_BUDGET_FILE to the private Raincheck credit cap.', 'budget_setup');
+  reserveBudget({ ...args, file });
+  return reserveBudget(args);
+}
+
 /** Reserve the full cost before HTTP. Every reservation survives provider failures and restarts. */
 export function reserveBudget({ model, request, file } = {}) {
   const target = resolveFile(file);

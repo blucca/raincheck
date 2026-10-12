@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { Raincheck } from './engine.mjs';
 import { LiveInterpreter, RecordedInterpreter } from './interpreter.mjs';
 import { PayPalSandboxPayments } from './payments.mjs';
-import { reserveBudget } from './budget.mjs';
+import { reserveRaincheckBudget } from './budget.mjs';
 import { seed, sandboxSeed } from './seed.mjs';
 import { SandboxCheckout } from './sandbox-checkout.mjs';
 
@@ -24,10 +24,7 @@ if (process.env.NEBIUS_API_KEY && process.env.NEBIUS_BUDGET_FILE) {
     apiKey: process.env.NEBIUS_API_KEY,
     baseUrl: process.env.NEBIUS_BASE_URL || 'https://api.tokenfactory.us-central1.nebius.com/v1',
     model: process.env.NEBIUS_MODEL || 'nvidia/nemotron-3-super-120b-a12b',
-    reserve: args => {
-      if (process.env.RAINCHECK_BUDGET_FILE) reserveBudget({ ...args, file: process.env.RAINCHECK_BUDGET_FILE });
-      return reserveBudget(args);
-    },
+    reserve: reserveRaincheckBudget,
     onResponse: process.env.RAINCHECK_MODEL_LOG_DIR ? response => {
       const dir = path.resolve(process.env.RAINCHECK_MODEL_LOG_DIR);
       fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
