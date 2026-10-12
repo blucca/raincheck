@@ -4,7 +4,7 @@
 
 [**Try the interactive preview →**](https://blucca.github.io/raincheck/)
 
-[**Watch the 105-second sandbox demo**](https://blucca.github.io/raincheck/public/demo.html) · Real PayPal sandbox APIs, live AI, one Sunday place and one $68 refund. [Recording notes](docs/sandbox-demo.md).
+[**Watch the 105-second sandbox demo**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/Tj6nW_1W3TU) · Real PayPal sandbox APIs, live AI, one Sunday place and one $68 refund. [Recording notes](docs/sandbox-demo.md).
 
 Running a cancelled class today? [**Download the free planning sheet**](https://blucca.github.io/raincheck/public/raincheck-planning-sheet.xlsx), or [have a plan prepared for **US$29 per batch, up to 30 bookings**](https://blucca.github.io/raincheck/public/demo.html#pilot). The assisted service delivers a worksheet, open questions and guest-message drafts; the operator executes changes in their own tools. [Scope and worked example](docs/planning-sheet.md).
 

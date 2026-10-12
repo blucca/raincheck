@@ -1,6 +1,6 @@
 # One original payment. Two clear outcomes.
 
-[Watch the 105-second film](https://blucca.github.io/raincheck/public/demo.html) · [Try the browser preview](https://blucca.github.io/raincheck/) · [Run your own sandbox](sandbox-guide.md)
+[Watch the 105-second film](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/Tj6nW_1W3TU) · [Try the browser preview](https://blucca.github.io/raincheck/) · [Run your own sandbox](sandbox-guide.md)
 
 ## What happens
 

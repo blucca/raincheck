@@ -1,5 +1,8 @@
 # Verified: two paid seats → one new class + one refund
 
+[Watch the 105-second real sandbox film](https://youtu.be/Tj6nW_1W3TU) · [Player and transcript](https://blucca.github.io/raincheck/public/demo.html)
+
+
 **Passed October 12, 2026, 16:04 UTC** — October 13, 00:04 in Beijing.
 Raincheck **0.2.0**, source [`0e24c37`](https://github.com/blucca/raincheck/commit/0e24c37bc9219b7fbf25000455678cceb4ba191a).
 
