@@ -79,7 +79,7 @@ The default sandbox workspace has one fictional guest with a payment awaiting ca
 
 A captured ticket can be refunded in full. A multi-person booking can split between full ticket refunds and equal-price rebookings. `PayPal-Request-Id` is saved with the exact amount and capture before a refund call. Known refund IDs are reconciled by GET.
 
-**Integration status:** checkout and recovery are implemented; automated checks use explicit API fixtures. The developer-account run is the next milestone for real sandbox order → approval → capture → $68 refund → GET receipt. The public preview continues to use simulated payments and recorded AI.
+**Sandbox verified — October 12, 2026 (UTC):** an account-connected run completed OAuth → $136 order → virtual buyer approval → capture → $68 refund → independent GET receipt. A newly worded reply used live Nebius AI, and a server restart preserved the completed case and replacement seat with zero holds. [Exact input, results, and public verification summary →](docs/sandbox-verification.md) Sandbox funds are virtual; the public preview uses simulated payments and recorded AI.
 
 ## Scope
 

@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-10-12T16:04:21.367Z",
+  "payment_mode": "PayPal sandbox",
+  "ai_mode": "live Nebius model",
+  "original_payment": {
+    "status": "COMPLETED",
+    "amount": "136.00",
+    "currency": "USD",
+    "seats": 2
+  },
+  "refund": {
+    "status": "COMPLETED",
+    "amount": "68.00",
+    "currency": "USD",
+    "seats": 1
+  },
+  "replacement": {
+    "session": "2026-10-18 14:00",
+    "seats": 1
+  },
+  "checks": {
+    "refund_id_matches": true,
+    "capture_binding_matches": true,
+    "operation_id_matches": true,
+    "restart_preserved_outcome": true,
+    "replacement_booked_seats": 8,
+    "remaining_holds": 0
+  },
+  "funds": "virtual",
+  "personal_data": "Private account credentials and original provider receipts are stored separately."
+}

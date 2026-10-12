@@ -52,7 +52,7 @@ On the cancellation desk:
 
 With the default recorded interpreter, Mina’s recorded AI result supplies the intent. Configure live AI as described in the [README](../README.md#live-ai) to analyze new wording.
 
-For the first account-connected run, read the resulting refund resource once more with `GET /v2/payments/refunds/{refund_id}` and compare its capture, amount, currency, and operation reference to the saved case. Preserve the private API receipts and record the observed result.
+For an independent receipt check, read the resulting refund resource with `GET /v2/payments/refunds/{refund_id}` and compare its refund ID, capture, amount, currency, and operation reference to the saved case. Preserve the private API receipts and record the observed result.
 
 ## Resume an interrupted step
 
@@ -71,6 +71,8 @@ A returned refund ID is saved before matching the receipt. Further recovery read
 
 ## Current verification
 
-The implementation includes concentrated fixture-based checks for checkout, response-loss recovery, and rejected payment mismatches. The public browser preview uses simulated payments. A developer-account-connected run is the next verification milestone.
+**The first account-connected run passed on October 12, 2026 (UTC).** PayPal sandbox OAuth, a $136 two-seat order, virtual buyer approval, capture, and a $68 refund all completed. Independent GET reads matched the order, capture, and refund. Live Nebius AI interpreted a newly worded split-booking request; after a server restart, the completed case and replacement seat persisted, with zero holds. [Read the exact input and verification record](sandbox-verification.md).
+
+Concentrated fixture-based checks also cover checkout, response-loss recovery, and rejected payment mismatches. The public browser preview uses simulated payments and recorded AI; the account-connected run used PayPal sandbox virtual funds.
 
 Official references: [Orders v2](https://developer.paypal.com/api/orders/v2/) · [Payments v2](https://developer.paypal.com/api/payments/v2/) · [Idempotency](https://developer.paypal.com/api/rest/reference/idempotency/).
