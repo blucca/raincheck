@@ -1,6 +1,6 @@
 # Raincheck — Devpost submission draft
 
-Status: **Draft for the PayPal AI Hackathon.** Prepared October 13, 2026. The project story and fields below are ready to paste into the submission form.
+**PayPal AI Hackathon submission copy.** Prepared October 13, 2026. Project overview, story, video, and links have been saved to Devpost draft 1233915.
 
 ## Project story
 
@@ -52,6 +52,10 @@ The useful unit of work is a guest’s complete next plan. Language, seats, mone
 
 We have invited three independent studios to review the workflow. Our next milestone is an operator-led cancellation: measure handling time, accepted replacement places, settled refunds, and repeated questions. The published $29 service covers a plan for up to 30 bookings; operators approve and execute changes in their own tools. Those first cases will guide booking-system integration and batch-capacity planning.
 
+### AI tools and original work
+
+Raincheck began on October 12, 2026 for this hackathon. Its workflow, interface, PayPal adapter, and shared execution core are new work. A small MIT-licensed model-request budget module was adapted from [DockProof](https://github.com/blucca/dockproof). OpenAI Codex / GPT-6 Astra handled agent-led research, design, implementation, focused testing, documentation, and submission preparation; a human owner manages accounts and payments. Amazon Polly synthesized the English demo narration. Runtime reply interpretation uses the live Nemotron model described above.
+
 ## Submission fields
 
 ### Project name
@@ -60,7 +64,7 @@ Raincheck
 
 ### Tagline
 
-A cancelled class. A good next plan for every guest.
+Turn a cancelled class into confirmed next plans. AI reads each guest’s reply; PayPal refunds and replacement seats settle together.
 
 ### Built with
 
@@ -114,3 +118,29 @@ Raincheck was started on October 12, 2026 for this hackathon. The cancelled-clas
 ### Current validation stage
 
 The product is grounded in published booking-provider instructions and workshop operators’ public policies. Three studios have been contacted. Recorded independent use, replies, trial feedback, accepted quotes, orders, and payments are currently **0**. The examples use fictional people and bookings. The two completed PayPal sandbox runs used virtual funds.
+
+## Event integration answers
+
+### Main technology requirement
+
+Raincheck uses the PayPal Sandbox and live AI in the core cancelled-class workflow. PayPal Orders v2 creates a two-ticket $136 order, obtains virtual-buyer approval, and captures payment. Independent order and capture GET calls verify the booking reference, amount, currency, and completed capture before the cancellation workspace accepts that payment.
+
+NVIDIA Nemotron 3 Super 120B A12B, hosted by Nebius Token Factory, interprets a newly worded guest reply into per-ticket transfer/refund intent and an exact supporting quote. Application policy checks quantities and replacement-seat capacity, derives the action, and computes the refund in integer cents. The operator reviews and approves the result.
+
+PayPal Payments v2 then refunds one complete $68 ticket against the original two-ticket capture while the other guest takes the last replacement place. A durable operation saves the exact request and PayPal-Request-Id before the call. Raincheck verifies the refund receipt against the original capture and operation, then confirms the held seat and saves the customer-message draft. Interrupted responses remain recoverable from the saved operation and GET receipts.
+
+Our 105-second public film shows actual sandbox calls and live inference, followed by a workspace reload and independent refund lookup: https://youtu.be/Tj6nW_1W3TU . A separate run also verified state persistence after a server restart. Participants and bookings are fictional; sandbox funds are virtual. Public evidence: https://github.com/blucca/raincheck/blob/main/docs/sandbox-verification.md .
+
+### PayPal integration experience
+
+**8 / 10.**
+
+PayPal's REST resources and virtual sandbox accounts let us build the complete order-approval-capture-partial-refund path using Node's built-in fetch. The original capture remains a clear anchor for the booking and its refund. PayPal-Request-Id and the resource GET endpoints were especially useful for our recoverable execution design.
+
+Most integration effort went into the boundary between a refund response and a scarce replacement seat: preserving the exact operation before HTTP, keeping the seat held while the outcome is unresolved, and checking that a recovered receipt belongs to the original capture and intended amount/currency. A compact guide that follows one multi-ticket order through split outcomes and interrupted-response reconciliation would help small booking platforms. The published guide and sandbox verification in our repository document the path we implemented.
+
+### Submission media
+
+![Raincheck: one payment, one seat rebooked, one ticket refunded](media/devpost-cover.png)
+
+[Full-size product demonstration frame](media/sandbox-demo.png). The frame comes from the published real-sandbox film; fictional guests and virtual funds are labeled on the image.
