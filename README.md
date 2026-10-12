@@ -4,7 +4,9 @@
 
 [**Try the interactive preview →**](https://blucca.github.io/raincheck/)
 
-[**Watch the 88-second, captioned demo →**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/YuRDifk8XN8) · One booking, one Sunday place, one $68 refund. The demo page also outlines a proposed **US$29 pilot per cancellation batch, up to 30 bookings** for workshop operators.
+[**Watch the 88-second, captioned demo →**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/YuRDifk8XN8) · One booking, one Sunday place, one $68 refund.
+
+Running a cancelled class today? [**Download the free planning sheet**](https://blucca.github.io/raincheck/public/raincheck-planning-sheet.xlsx), or [have a plan prepared for **US$29 per batch, up to 30 bookings**](https://blucca.github.io/raincheck/public/demo.html#pilot). The assisted service delivers a worksheet, open questions and guest-message drafts; the operator executes changes in their own tools. [Scope and worked example](docs/planning-sheet.md).
 
 A kiln breaks. Four bookings need attention. One pair wants to split: a sister can attend Sunday, the other person wants her money back. Another guest wants a full refund. A third group wants to move together. Someone still needs the available times.
 

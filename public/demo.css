@@ -88,6 +88,9 @@ video::cue { color: #fffefa; background: #142c36e8; font-family: var(--sans); }
 .pilot-section { display: grid; grid-template-columns: minmax(0, 1fr) 338px; align-items: start; gap: 104px; padding-block: 55px 53px; border-top: 1px solid var(--line); }
 .pilot-intro h2 { margin-top: 12px; font: 500 44px/1.12 var(--serif); letter-spacing: -1.3px; }
 .pilot-description { max-width: 485px; margin-top: 20px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.worksheet-download { max-width: 485px; margin-top: 22px; padding-block: 16px; border-block: 1px solid var(--line); font-size: 12px; font-weight: 650; }
+.worksheet-download > a { color: var(--clay); }
+.worksheet-download span { display: inline-block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.8; font-weight: 400; }
 .reply-card { margin-top: 26px; }
 .reply-card h3 { font-size: 12px; font-weight: 650; }
 .reply-card ol { padding-left: 19px; margin: 13px 0 21px; color: var(--muted); font-size: 12px; }
