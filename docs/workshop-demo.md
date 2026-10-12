@@ -1,6 +1,6 @@
 # One class cancelled. A clear next step for every guest.
 
-[**Watch the 88-second film →**](https://blucca.github.io/raincheck/public/demo.html) · [Try the interactive preview](https://blucca.github.io/raincheck/)
+[**Watch the 88-second film →**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/YuRDifk8XN8) · [Try the interactive preview](https://blucca.github.io/raincheck/)
 
 The film follows a fictional pottery studio after a kiln repair forces it to cancel a Saturday class. Mina's two-person booking splits into one Sunday place for her sister and a full $68 ticket refund for Mina.
 

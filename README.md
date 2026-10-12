@@ -4,7 +4,7 @@
 
 [**Try the interactive preview →**](https://blucca.github.io/raincheck/)
 
-[**Watch the 88-second, captioned demo →**](https://blucca.github.io/raincheck/public/demo.html) · One booking, one Sunday place, one $68 refund. The demo page also outlines a proposed **US$29 pilot per cancellation batch, up to 30 bookings** for workshop operators.
+[**Watch the 88-second, captioned demo →**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/YuRDifk8XN8) · One booking, one Sunday place, one $68 refund. The demo page also outlines a proposed **US$29 pilot per cancellation batch, up to 30 bookings** for workshop operators.
 
 A kiln breaks. Four bookings need attention. One pair wants to split: a sister can attend Sunday, the other person wants her money back. Another guest wants a full refund. A third group wants to move together. Someone still needs the available times.
 
