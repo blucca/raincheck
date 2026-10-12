@@ -10,7 +10,7 @@ A cancelled class creates a second job for the person who was supposed to teach 
 
 Bookwhen’s [cancellation](https://support.bookwhen.com/en/articles/3790128-cancelling-an-event) and [refund](https://support.bookwhen.com/en/articles/753627-refunds) instructions describe contacting guests, handling tickets, refunding through the payment gateway, and recording those refunds back in the booking system. [Mark H Rooney Taiko’s public policy](https://www.markhrooney.com/registration-and-cancellation-policies/) makes the stakes concrete: full PayPal payment reserves a limited place; a weather or teacher cancellation earns a full refund.
 
-One reply made the product concrete: “My sister can come Sunday. Please move her ticket and refund mine.” That is one payment, two people, and two promises the studio needs to keep.
+We designed around a simple two-person booking: “My sister can come Sunday. Please move her ticket and refund mine.” That is one payment, two people, and two promises the studio needs to keep.
 
 ### What it does
 
@@ -36,7 +36,7 @@ Execution saves the original capture, exact refund body, and unique `PayPal-Requ
 
 The difficult boundary was a payment response arriving late or disappearing while the last replacement seat was at stake. Raincheck preserves an unresolved operation and its seat hold, then reconciles the receipt against the original capture, operation reference, amount, and currency.
 
-Early model runs also exposed conflicting action labels and ticket counts. We simplified the model’s job to explicit intent fields and moved action selection into the shared policy. Every original ticket gets an outcome; ambiguous replies become a specific question for the guest.
+Early model runs also exposed conflicting action labels and ticket counts. We simplified the model’s job to explicit intent fields and moved action selection into the shared policy. Execution accounts for every original ticket; ambiguous replies become a specific question for the guest.
 
 ### Accomplishments that we’re proud of
 

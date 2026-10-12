@@ -17,4 +17,4 @@ An initial Priya output identified an open question correctly and supplied an em
 
 These changes produced all four accepted outcomes through the running Node API. The tests separately exercise seat contention and a response lost after the simulated payment provider finishes a refund.
 
-**Observation scope:** four synthetic customer replies, one model endpoint, and the selected cancellation scenario. Operator feedback, real sandbox payment execution, and a broader customer-language sample are the next milestones.
+**Observation scope:** four synthetic customer replies, one model endpoint, and the selected cancellation scenario. The subsequent [account-connected sandbox verification](sandbox-verification.md) completed order, capture and refund with a newly worded live-model reply. Operator-led use and a broader customer-language sample are the next milestones.
