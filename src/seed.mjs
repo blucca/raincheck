@@ -23,4 +23,12 @@ export const seed = {
     capture_id: `sim_capture_${b.id}`, status: 'affected' }))
 };
 
+/** Synthetic guest and classes; the checkout desk supplies a captured PayPal sandbox payment. */
+export function sandboxSeed() {
+  const scenario = structuredClone(seed);
+  scenario.title = 'Raincheck · PayPal sandbox workshop';
+  scenario.bookings = [{ ...scenario.bookings[0], capture_id: null, status: 'awaiting_payment' }];
+  return scenario;
+}
+
 export { recordedIntents } from './recorded.mjs';

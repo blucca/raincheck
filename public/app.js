@@ -118,7 +118,7 @@ function modeTags() {
   const live = state.workspace?.mode?.ai === 'live';
   return `
     <span class="mode-tag demo">${icon('ledger')}${isSimulated() ? 'Demo ledger' : 'PayPal sandbox ledger'}</span>
-    <span class="mode-tag ${isSimulated() ? 'pending' : 'live'}">${icon(isSimulated() ? 'clock' : 'checkCircle')}${isPreview ? 'Private browser preview' : (isSimulated() ? 'Sandbox credentials pending' : 'Sandbox connected')}</span>
+    <span class="mode-tag ${isSimulated() ? 'pending' : 'live'}">${icon(isSimulated() ? 'clock' : 'checkCircle')}${isPreview ? 'Private browser preview' : (isSimulated() ? 'Sandbox credentials pending' : 'Sandbox configured')}</span>
     <span class="mode-tag ${live ? 'live' : ''}"><span class="tag-dot"></span>${live ? 'Live AI' : 'Recorded AI examples'}</span>`;
 }
 
@@ -204,7 +204,7 @@ function renderComposer(booking, entry) {
       <textarea id="customer-reply" class="reply-input" rows="3" maxlength="4000" placeholder="Paste or write the customer’s reply…" ${busy || locked ? 'disabled' : ''}>${escapeHTML(draft)}</textarea>
     </div>
     <div class="composer-footer">
-      <p class="composer-hint">${locked ? 'This reply belongs to the plan below. Follow its next step to finish the booking.' : state.workspace.mode?.ai === 'live' ? 'AI reads the request. The seat and payment ledgers check the plan.' : 'Four recorded customer stories, ready to try. Free-form replies use live AI when connected.'}</p>
+      <p class="composer-hint">${locked ? 'This reply belongs to the plan below. Follow its next step to finish the booking.' : state.workspace.mode?.ai === 'live' ? 'AI reads the request. The seat and payment ledgers check the plan.' : 'Recorded customer replies are ready to try. Free-form replies use live AI when connected.'}</p>
       <button type="button" class="button button-primary" data-action="analyze" ${busy || locked || !draft.trim() ? 'disabled' : ''}>${state.pending === 'analyze' ? '<span class="spinner" aria-hidden="true"></span>Reading reply…' : locked ? `${icon('check')}Reply analyzed` : `${icon('spark')}Analyze reply`}</button>
     </div>
     <p class="stale-plan ${isDirty(booking.id) ? 'visible' : ''}" id="stale-plan">The reply has changed. Analyze it again to update the plan.</p>
@@ -303,6 +303,8 @@ function renderNextStep(booking, entry) {
       <div class="question-draft">${escapeHTML(questionFor(booking, entry))}</div>
       <button type="button" class="button button-quiet button-small" data-action="copy-question">${icon('copy')}Copy question</button>
     </div>`;
+  } else if (!isSimulated() && !booking.capture_id) {
+    content = `<div class="attention-panel"><h3 class="attention-heading">${icon('ticket')}Start with the original payment.</h3><p>Create and capture this ${escapeHTML(money(booking.quantity * booking.unit_amount, booking.currency))} booking in the PayPal sandbox. This plan will use its verified capture.</p><a class="button button-primary" href="/sandbox.html?booking=${encodeURIComponent(booking.id)}">Open Sandbox checkout ${icon('arrow')}</a></div>`;
   } else if (status === 'payment_failed') {
     content = `<div class="attention-panel"><h3 class="attention-heading">${icon('warning')}Review this payment.</h3><p>${escapeHTML(entry.error?.message || 'The payment provider closed this refund attempt. Review its receipt and the original payment history before arranging a new outcome.')}</p><p>The original operation stays in the outcome record. Reserved replacement seats have been released.</p></div>`;
   } else if (status === 'executing') {
@@ -354,7 +356,9 @@ function customerReply(booking, entry) {
   const complete = entry.status === 'completed';
   const name = booking.name.split(' ')[0];
   const parts = [`Hi ${name}, thanks for getting back to us, and for understanding the change of plans.`];
-  if (['reconciling', 'payment_pending', 'executing'].includes(entry.status)) {
+  if (entry.status === 'payment_failed') {
+    parts.push('We’re reviewing your original payment and will confirm the next steps for your booking once that review is complete.');
+  } else if (['reconciling', 'payment_pending', 'executing'].includes(entry.status)) {
     if (plan.transfer_quantity > 0) parts.push(`We’re holding ${seatLabel(plan.transfer_quantity)} for you on ${sessionDescription(sessionById(plan.target_session_id))}.`);
     if (plan.refund_quantity > 0) parts.push(`We’re checking the status of your ${money(plan.refund_amount, plan.currency || booking.currency)} refund and will send the outcome as soon as it is confirmed.`);
   } else {
@@ -387,9 +391,9 @@ function renderCase() {
     <header class="case-header">
       <div class="case-header-top">
         <div class="case-person"><span class="avatar avatar-${index % 4}">${escapeHTML(initials(booking.name))}</span><div><h2 id="case-person-name">${escapeHTML(booking.name)}</h2><p class="case-email">${escapeHTML(booking.email)}</p></div></div>
-        <div class="payment-total"><strong>${escapeHTML(money(booking.quantity * booking.unit_amount, booking.currency))}</strong><span>${booking.quantity} × ${escapeHTML(money(booking.unit_amount, booking.currency))} · originally paid</span></div>
+        <div class="payment-total"><strong>${escapeHTML(money(booking.quantity * booking.unit_amount, booking.currency))}</strong><span>${booking.quantity} × ${escapeHTML(money(booking.unit_amount, booking.currency))} · ${isSimulated() || booking.capture_id ? 'originally paid' : 'awaiting sandbox payment'}</span></div>
       </div>
-      <div class="case-meta"><span class="case-meta-note">${icon('ticket')}${escapeHTML(seatLabel(booking.quantity))} · ${escapeHTML(state.workspace.cancellation?.title || 'Cancelled class')}</span><span class="case-meta-note">${icon('shield')}Capture <code>${escapeHTML(booking.capture_id || 'demo booking')}</code></span></div>
+      <div class="case-meta"><span class="case-meta-note">${icon('ticket')}${escapeHTML(seatLabel(booking.quantity))} · ${escapeHTML(state.workspace.cancellation?.title || 'Cancelled class')}</span><span class="case-meta-note">${icon('shield')}Capture <code>${escapeHTML(booking.capture_id || 'awaiting checkout')}</code></span></div>
     </header>
     ${renderComposer(booking, entry)}
     ${entry?.plan ? renderPlan(booking, entry) : renderEmptyAnalysis()}
@@ -407,7 +411,7 @@ function render() {
       <div><p class="eyebrow">The studio reschedule desk</p><h1>Keep the care.<br><em>Change the plan.</em></h1></div>
       ${renderCancellation()}
     </section>
-    <div class="mode-line" aria-label="Connected services">${modeTags()}<button class="text-button reset-button" type="button" data-action="reset" ${state.pending ? 'disabled' : ''}>${icon('reset')}${state.pending === 'reset' ? 'Resetting…' : 'Reset demo'}</button></div>
+    <div class="mode-line" aria-label="Connected services">${modeTags()}${isSimulated() ? `<button class="text-button reset-button" type="button" data-action="reset" ${state.pending ? 'disabled' : ''}>${icon('reset')}${state.pending === 'reset' ? 'Resetting…' : 'Reset demo'}</button>` : '<a class="text-button reset-button" href="/sandbox.html">Sandbox checkout & receipts →</a>'}</div>
     ${renderMetrics()}
     ${state.error ? `<div class="error-banner" role="alert">${icon('warning')}<span>${escapeHTML(state.error)}</span><button class="text-button" type="button" data-action="dismiss-error" aria-label="Dismiss error">×</button></div>` : ''}
     <div class="desk-grid">
@@ -646,7 +650,7 @@ function showAbout() {
       <section class="about-step"><span class="step-number">02</span><h3>Make the sums work.</h3><p>The ledger checks the original paid seats, calculates the exact amount, and checks space in the new class.</p></section>
       <section class="about-step"><span class="step-number">03</span><h3>Follow it through.</h3><p>Run the plan, track the refund, finish the booking, and send a thoughtful reply. An interrupted payment response has its own recovery path.</p></section>
     </div>
-    <div class="about-mode"><h3>This workspace</h3><div class="mode-line">${modeTags()}</div><p>${isSimulated() ? 'Demo ledger: synthetic original captures, simulated refunds, and sample bookings. Connecting PayPal sandbox credentials enables test-account payments.' : 'Sandbox ledger: PayPal test-account captures and refunds, paired with sample bookings.'} ${state.workspace?.mode?.ai === 'live' ? 'Live AI analyzes submitted customer replies.' : 'Recorded AI: the four seeded customer replies have recorded structured interpretations. Free-form requests ask for a clearer reply until live AI is connected.'}</p></div>`);
+    <div class="about-mode"><h3>This workspace</h3><div class="mode-line">${modeTags()}</div><p>${isSimulated() ? 'Demo ledger: synthetic original captures, simulated refunds, and sample bookings. Connecting PayPal sandbox credentials enables test-account payments.' : 'Sandbox ledger: PayPal test-account captures and refunds, paired with sample bookings.'} ${state.workspace?.mode?.ai === 'live' ? 'Live AI analyzes submitted customer replies.' : 'Recorded AI supplies saved interpretations for the example replies. Live AI handles new wording when configured.'}</p><p style="margin-top:10px"><a href="./sandbox.html">Set up a PayPal sandbox payment →</a></p></div>`);
 }
 
 document.addEventListener('click', (event) => {

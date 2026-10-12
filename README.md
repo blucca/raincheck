@@ -45,7 +45,7 @@ The default app replays the recorded examples with a durable simulated payment l
 npm test
 ```
 
-Four focused checks cover the entire cancelled class, process-restart recovery, a seat filled after planning, and exact ticket/quote validation.
+Focused checks cover cancellation outcomes, restart recovery, seat capacity, exact ticket/quote validation, and the sandbox checkout API contract.
 
 ### Live AI
 
@@ -61,16 +61,21 @@ New replies use live AI. The application computes amounts and checks availabilit
 
 ### PayPal sandbox
 
-The integration uses the free PayPal sandbox exclusively:
+The integration uses the free PayPal sandbox exclusively. The app now includes a **three-step checkout desk**:
 
-- Create a sandbox application and virtual buyer/seller accounts.
-- Configure `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET` in the private environment.
-- Supply a scenario JSON through `RAINCHECK_SCENARIO_FILE`, using the shape in `src/seed.mjs` and genuine **captured sandbox payment IDs**.
-- Use a fresh `RAINCHECK_DATA_DIR` for that scenario. Existing workspaces preserve their original bookings and payment history.
+1. Configure `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET` in a private environment file. Use a fresh `RAINCHECK_DATA_DIR`.
+2. Open **[local Sandbox checkout](http://127.0.0.1:4326/sandbox.html)** and create Mina’s **two-seat, $136 test order**.
+3. Approve it with a virtual Personal sandbox buyer, then click **Capture approved order**.
+4. Raincheck reads the capture and matches the booking, amount, currency, and order ID. The capture is saved directly into the cancellation workspace.
+5. Open the cancellation desk, analyze Mina’s reply, and execute **one Sunday seat + one $68 refund**.
+
+[**Complete sandbox setup and recovery guide →**](docs/sandbox-guide.md)
+
+The default sandbox workspace has one fictional guest with a payment awaiting capture. The default simulated workspace retains all four stories. Each workspace keeps its payment mode and payment history across restarts.
 
 A captured ticket can be refunded in full. A multi-person booking can split between full ticket refunds and equal-price rebookings. `PayPal-Request-Id` is saved with the exact amount and capture before a refund call. Known refund IDs are reconciled by GET.
 
-**Next integration milestone:** connect the developer account and demonstrate a real sandbox order → buyer approval → capture → partial refund → receipt. The current public preview demonstrates the complete local workflow and interruption recovery.
+**Integration status:** checkout and recovery are implemented; automated checks use explicit API fixtures. The developer-account run is the next milestone for real sandbox order → approval → capture → $68 refund → GET receipt. The public preview continues to use simulated payments and recorded AI.
 
 ## Scope
 

@@ -75,3 +75,48 @@ test('ticket math and evidence are independent of model prose', () => {
   assert.equal(planFromIntent({ ...base, intent: { ...recordedIntents.mina, refund_amount: 1 } }).plan.refund_amount, 6800);
   assert.equal(planFromIntent({ ...base, intent: { ...recordedIntents.priya, evidence: '' } }).status, 'needs_reply');
 });
+
+test('sandbox booking requires capture before a cancellation reserves seats', async () => {
+  const scenario = structuredClone(seed);
+  scenario.bookings = [{ ...scenario.bookings[0], capture_id: null, status: 'awaiting_payment' }];
+  const payments = { mode: 'sandbox', refund() { assert.fail('Capture comes before refund.'); } };
+  const app = new Raincheck({ scenario, payments });
+  try {
+    await analyze(app, 'mina');
+    await assert.rejects(app.execute('mina'), { code: 'capture_required' });
+    assert.equal(app.workspace().sessions[0].held, 0);
+    assert.equal(app.store.get('case', 'mina').status, 'ready');
+    assert.equal(app.store.get('case', 'mina').operation, null);
+    assert.throws(() => app.reset(), { code: 'reset_demo_only' });
+  } finally { app.close(); }
+});
+
+test('returned refund ID survives receipt mismatch; recovery reads the same resource', async () => {
+  const scenario = structuredClone(seed);
+  scenario.bookings = [{ ...scenario.bookings[0], capture_id: 'CAPTURE12345678901', paypal_order_id: 'ORDER1234567890123' }];
+  let writes = 0, reads = 0, operation;
+  const receipt = amount => ({ id: 'REFUND123456789012', status: 'COMPLETED', amount, currency: 'USD',
+    capture_id: scenario.bookings[0].capture_id, custom_id: operation.request_id });
+  const payments = {
+    mode: 'sandbox',
+    refundBody(op) { return { amount: op.amount, reference: op.request_id }; },
+    async refund(op) { writes++; operation = structuredClone(op); return receipt(null); },
+    async getRefund(id) { reads++; assert.equal(id, 'REFUND123456789012'); return receipt(6800); }
+  };
+  const app = new Raincheck({ scenario, payments });
+  try {
+    await analyze(app, 'mina');
+    const first = await app.execute('mina');
+    assert.equal(first.status, 'reconciling');
+    assert.equal(first.refund.id, 'REFUND123456789012');
+    assert.equal(first.operation.order_id, scenario.bookings[0].paypal_order_id);
+    assert.deepEqual(first.operation.body, { amount: 6800, reference: operation.request_id });
+    assert.equal(app.workspace().metrics.refunded_amount, 0);
+    assert.equal(app.workspace().sessions[0].held, 1);
+    assert.equal((await app.execute('mina')).status, 'completed');
+    assert.equal(writes, 1);
+    assert.equal(reads, 1);
+    assert.equal(app.workspace().metrics.refunded_amount, 6800);
+    assert.equal(app.workspace().sessions[0].held, 0);
+  } finally { app.close(); }
+});

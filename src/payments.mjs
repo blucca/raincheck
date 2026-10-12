@@ -43,6 +43,12 @@ function money(value) {
   return Number(value.replace('.', ''));
 }
 
+export function refundBody(operation) {
+  return { amount: { value: (operation.amount / 100).toFixed(2), currency_code: operation.currency },
+    custom_id: operation.request_id, invoice_id: `RC-${operation.request_id}`,
+    note_to_payer: 'Workshop cancelled. Full ticket value refunded for the selected guests.' };
+}
+
 /** Every network call is fixed to PayPal's free sandbox. */
 export class PayPalSandboxPayments {
   mode = 'sandbox';
@@ -78,28 +84,57 @@ export class PayPalSandboxPayments {
       const definitive = [400, 403, 422].includes(response.status);
       throw new PaymentError(issue, `PayPal sandbox returned ${issue}.`, { definitive });
     }
+    if (!payload || typeof payload !== 'object') {
+      throw new PaymentError('response_unknown', 'The sandbox response body was interrupted. Reconcile the saved request.');
+    }
     return payload;
+  }
+  async createOrder(operation) {
+    return this.request('/v2/checkout/orders', { method: 'POST', requestId: operation.request_id, body: operation.body });
+  }
+  async getOrder(id) {
+    if (!/^[A-Z0-9]{1,36}$/.test(id)) throw new DomainError('order_id', 'Use a valid sandbox order ID.');
+    return this.request(`/v2/checkout/orders/${id}`);
+  }
+  async captureOrder(id, operation) {
+    if (!/^[A-Z0-9]{1,36}$/.test(id)) throw new DomainError('order_id', 'Use a valid sandbox order ID.');
+    return this.request(`/v2/checkout/orders/${id}/capture`, {
+      method: 'POST', requestId: operation.request_id, body: operation.body
+    });
+  }
+  async getCapture(id) {
+    if (!/^[A-Za-z0-9]{10,32}$/.test(id)) throw new DomainError('capture_id', 'Use a valid sandbox capture ID.');
+    return this.request(`/v2/payments/captures/${id}`);
   }
   normalize(body) {
     const up = body?.links?.find(l => l.rel === 'up')?.href || '';
-    const match = up.match(/^https:\/\/api(?:-m)?\.(?:sandbox\.)?paypal\.com\/v2\/payments\/captures\/([A-Za-z0-9]+)$/);
-    return { id: body.id, status: body.status, amount: money(body.amount?.value), currency: body.amount?.currency_code,
+    const match = up.match(/^https:\/\/api(?:-m)?\.sandbox\.paypal\.com\/v2\/payments\/captures\/([A-Za-z0-9]+)$/);
+    let amount = null;
+    try { amount = money(body.amount?.value); } catch { /* Preserve a known receipt ID for GET reconciliation. */ }
+    return { id: body.id, status: body.status, amount, currency: body.amount?.currency_code,
       capture_id: match?.[1] || null, custom_id: body.custom_id || null, invoice_id: body.invoice_id || null, created_at: body.create_time || null };
   }
+  refundBody(operation) { return refundBody(operation); }
   async refund(operation) {
     if (!/^[A-Za-z0-9]{10,32}$/.test(operation.capture_id)) {
       throw new PaymentError('capture_setup', 'Attach a real captured sandbox payment to this booking.', { definitive: true });
     }
     const payload = await this.request(`/v2/payments/captures/${operation.capture_id}/refund`, {
       method: 'POST', requestId: operation.request_id,
-      body: { amount: { value: (operation.amount / 100).toFixed(2), currency_code: operation.currency },
-        custom_id: operation.request_id, invoice_id: `RC-${operation.request_id}`,
-        note_to_payer: 'Workshop cancelled. Full ticket value refunded for the selected guests.' }
+      body: operation.body || refundBody(operation)
     });
     return this.normalize(payload);
   }
   async getRefund(id) {
     if (!/^[A-Za-z0-9]{10,32}$/.test(id)) throw new DomainError('refund_id', 'Use a valid sandbox refund ID.');
     return this.normalize(await this.request(`/v2/payments/refunds/${id}`));
+  }
+  async findRefund(operation) {
+    const order = await this.getOrder(operation.order_id);
+    if (order.id !== operation.order_id) throw new PaymentError('order_binding', 'Reconcile the refund against its saved sandbox order.');
+    const candidates = (order.purchase_units || []).flatMap(unit => unit.payments?.refunds || [])
+      .filter(refund => refund.custom_id === operation.request_id || refund.invoice_id === `RC-${operation.request_id}`);
+    if (candidates.length > 1) throw new PaymentError('refund_candidates', 'Several receipts match the saved refund request. Review the sandbox order.');
+    return candidates.length ? this.getRefund(candidates[0].id) : null;
   }
 }

@@ -11,8 +11,15 @@ export class Raincheck {
   constructor({ store, interpreter = new RecordedInterpreter(), payments, scenario = seed } = {}) {
     if (!store) throw new Error('Configure a persistent workspace store.');
     this.store = store; this.scenario = scenario;
-    if (!this.store.get('meta', 'workspace')) this.store.reset(scenario);
     this.interpreter = interpreter; this.payments = payments || new SimulatedPayments(this.store);
+    const prior = this.store.get('meta', 'workspace');
+    if (!prior) this.store.reset(scenario);
+    const meta = this.store.get('meta', 'workspace');
+    const savedMode = meta.payment_mode || (prior && this.store.all('booking').some(b => b.capture_id?.startsWith('sim_')) ? 'simulated' : this.payments.mode);
+    if (savedMode !== this.payments.mode) {
+      throw new DomainError('workspace_payment_mode', `This workspace uses ${savedMode} payments. Use its original payment mode or a fresh RAINCHECK_DATA_DIR.`);
+    }
+    this.store.put('meta', 'workspace', { ...meta, payment_mode: this.payments.mode });
     this.active = new Set();
     this.store.transaction(() => {
       for (const item of this.store.all('case')) {
@@ -56,7 +63,7 @@ export class Raincheck {
         const result = planFromIntent({ booking: this.booking(id), sessions: this.store.all('session'), message, intent, source: this.interpreter.mode });
         const item = { id: randomUUID(), booking_id: id, ...result, customer_message: message, events: [], operation: null, reserved: false };
         event(item, 'PLAN_CREATED', 'Customer choice interpreted; ticket prices and availability checked.');
-        this.store.put('booking', id, { ...booking, message });
+        this.store.put('booking', id, { ...this.booking(id), message });
         this.store.put('case', id, item);
         return item;
       });
@@ -98,14 +105,18 @@ export class Raincheck {
         const c = this.store.get('case', id); const booking = this.booking(id);
         if (!c) throw new DomainError('plan_required', 'Interpret the customer reply before confirming an outcome.');
         if (c.status === 'completed') return c;
+        if (this.payments.mode === 'sandbox' && !/^[A-Za-z0-9]{10,32}$/.test(booking.capture_id || '')) {
+          throw new DomainError('capture_required', 'Open Sandbox checkout and capture this booking before running its cancellation plan.');
+        }
         if (!['ready', 'executing', 'payment_pending', 'reconciling'].includes(c.status)) {
           throw new DomainError('choice_required', 'Resolve this customer choice before confirming an outcome.');
         }
         this.reserve(c);
         if (c.status === 'capacity_conflict') { this.store.put('case', id, c); return c; }
         if (c.plan.refund_amount === 0) { this.finish(c); this.store.put('case', id, c); return c; }
-        c.operation ||= { request_id: randomUUID(), capture_id: booking.capture_id, amount: c.plan.refund_amount,
-          currency: c.plan.currency, created_at: new Date().toISOString() };
+        c.operation ||= { request_id: randomUUID(), capture_id: booking.capture_id, order_id: booking.paypal_order_id || null,
+          amount: c.plan.refund_amount, currency: c.plan.currency, created_at: new Date().toISOString() };
+        if (!c.operation.body && this.payments.refundBody) c.operation.body = this.payments.refundBody(c.operation);
         c.status = 'executing';
         event(c, 'REFUND_REQUESTED', 'Saved refund ID, capture, amount, and seat reservation before contacting the payment provider.');
         this.store.put('case', id, c); return c;
@@ -117,11 +128,20 @@ export class Raincheck {
         if (item.refund?.id) receipt = await this.payments.getRefund(item.refund.id);
         else {
           if (this.payments.mode === 'sandbox' && Date.now() - Date.parse(item.operation.created_at) > 10 * 60 * 1000) {
-            throw new DomainError('manual_reconciliation', 'Review the original sandbox order and refund history before retrying this older interrupted request.');
-          }
-          receipt = await this.payments.refund(item.operation, options);
+            receipt = this.payments.findRefund ? await this.payments.findRefund(item.operation) : null;
+            if (!receipt) throw new DomainError('manual_reconciliation', 'Review the original sandbox order and refund history to locate this saved refund. Its request remains on hold.');
+          } else receipt = await this.payments.refund(item.operation, options);
         }
-        if (!receipt?.id || receipt.amount !== item.operation.amount || receipt.currency !== item.operation.currency ||
+        const knownRefundId = item.refund?.id;
+        if (receipt?.id && !knownRefundId) {
+          // Persist the returned resource before matching it; later recovery reads that same ID.
+          this.store.transaction(() => {
+            const saved = this.store.get('case', id);
+            saved.refund = receipt;
+            this.store.put('case', id, saved);
+          });
+        }
+        if (!receipt?.id || (knownRefundId && receipt.id !== knownRefundId) || receipt.amount !== item.operation.amount || receipt.currency !== item.operation.currency ||
             receipt.capture_id !== item.operation.capture_id ||
             (this.payments.mode === 'sandbox' && receipt.custom_id !== item.operation.request_id)) {
           throw new DomainError('receipt_mismatch', 'Review the payment receipt: its capture, currency, and amount must match the saved operation.');
@@ -152,7 +172,9 @@ export class Raincheck {
   reset() {
     if (this.payments.mode !== 'simulated') throw new DomainError('reset_demo_only', 'Reset is available for the simulated ledger.');
     if (this.active.size) throw new DomainError('case_busy', 'Let the active operation finish before resetting this demo.');
-    this.store.reset(this.scenario); return this.workspace();
+    this.store.reset(this.scenario);
+    this.store.put('meta', 'workspace', { ...this.store.get('meta', 'workspace'), payment_mode: this.payments.mode });
+    return this.workspace();
   }
   close() { this.store.close(); }
 }
