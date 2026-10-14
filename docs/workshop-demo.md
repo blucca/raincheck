@@ -17,7 +17,7 @@ The film follows a fictional pottery studio after a kiln repair forces it to can
 - Actual browser interactions were recorded on October 12, 2026. The edit combines those interactions with captured frames and explanatory graphics.
 - All guests, bookings, original captures, and refunds in this film are fictional. Payments use Raincheck's simulated ledger; the interrupted response is an explicitly selected demonstration scenario.
 - The preview replays [saved outputs from real AI calls](model-observations.md). New free-form replies use the live interpreter in a configured Node workspace.
-- The separate [PayPal sandbox checkout](sandbox-guide.md) supports test-order creation, buyer approval, capture, and refund reconciliation. The [new 105-second recording](sandbox-demo.md) completes the real sandbox payment and refund with live AI.
+- The separate [PayPal sandbox checkout](sandbox-guide.md) supports test-order creation, buyer approval, capture, and refund reconciliation. The [new 143-second recording](sandbox-demo.md) completes the real sandbox payment and refund with live AI.
 - English narration is synthesized. Open captions are part of the film; an optional WebVTT track and a text transcript are available on the viewing page.
 
 ## Workshop pilot

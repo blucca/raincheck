@@ -4,7 +4,7 @@
 
 [**Try the interactive preview →**](https://blucca.github.io/raincheck/) · [PayPal AI Hackathon entry](https://devpost.com/software/raincheck-l145bd)
 
-[**Watch the 105-second sandbox demo**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/Tj6nW_1W3TU) · Real PayPal sandbox APIs, live AI, one Sunday place and one $68 refund. [Recording notes](docs/sandbox-demo.md).
+[**Watch the 143-second demo (2:23)**](https://blucca.github.io/raincheck/public/demo.html) · [YouTube](https://youtu.be/wsQ2SLqudw0) · A real PayPal sandbox capture and $68 refund, followed by a separate AG Studio rehearsal: two families, one last place, and recovery of a simulated refund. Live AI in both workspaces. [Recording notes and transcript](docs/sandbox-demo.md).
 
 Running a cancelled class today? [**Download the free planning sheet**](https://blucca.github.io/raincheck/public/raincheck-planning-sheet.xlsx), or [have a plan prepared for **US$29 per batch, up to 30 bookings**](https://blucca.github.io/raincheck/public/demo.html#pilot). The assisted service delivers a worksheet, open questions and guest-message drafts; the operator executes changes in their own tools. [Scope and worked example](docs/planning-sheet.md).
 
@@ -86,6 +86,8 @@ A captured ticket can be refunded in full. A multi-person booking can split betw
 **Two families. One Sunday place.** Choose a make-up class in the native Studio filter, see its competing household plans, and open the existing confirmation desk. A custom seat-pressure widget keeps whole-batch availability beside the matching families' proposed, in-progress, and settled refunds. Refresh reads the result after a household settles.
 
 The optional local module uses **AG Studio 3.0.0** with your own valid licence. Its native Agent Framework can query the saved batch and filter the family queue through the existing budgeted model connection.
+
+The [film's Studio segment starts at 1:33](https://blucca.github.io/raincheck/public/demo.html). Its five fictional households have scripted plans and simulated payments. The live analyst reads the batch and filters Mina and Elliot; the confirmation desk then interrupts and resumes Mina's saved refund operation. Refresh shows Sunday at **8 booked, 0 held**, **$68 settled**, and **$136 in other proposed refunds** across the batch.
 
 [**Local setup and repeatable five-family example**](docs/batch-preflight.md)
 
