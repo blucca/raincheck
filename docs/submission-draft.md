@@ -147,7 +147,13 @@ Our 143-second public film pairs actual sandbox calls and live reply interpretat
 
 ### Sponsor technology used
 
-**AG Studio.** AG Studio 3.0.0 powers Raincheck’s local batch preflight: native class filters and family grid, a custom seat-pressure widget and theme/layout, and a live Agent Framework analyst that reads the saved batch and filters the review queue. Families return to the existing confirmation desk for approval and execution. Setup: https://github.com/blucca/raincheck/blob/main/docs/batch-preflight.md . A valid AG Studio licence is required for the local module.
+**AG Studio (form option: AG Grid).** AG Studio 3.0.0 powers Raincheck’s local batch preflight: native class filters and family grid, a custom seat-pressure widget and theme/layout, and a live Agent Framework analyst that reads the saved batch and filters the review queue. Families return to the existing confirmation desk for approval and execution. Setup: https://github.com/blucca/raincheck/blob/main/docs/batch-preflight.md . A valid AG Studio licence is required for the local module.
+
+### AG Studio integration experience
+
+AG Studio 3.0.0 gave our existing Node/SQLite application a coherent class-wide review surface: native class filtering and a family grid alongside a custom seat-pressure widget and workshop theme. Its Agent Framework read the saved batch, identified the last-seat conflict, and filtered the actual grid to Mina and Elliot.
+
+The main integration effort was matching the model's filter call to Studio's native filter arguments. We added a validated filter_makeup_session tool that supplies the exact filter object. The household confirmation desk keeps the existing payment and seat-hold workflow, and Studio refreshes its saved result. A compact end-to-end example covering a custom widget, a domain-specific filter tool and a server-side model runner would make this integration easier to repeat.
 
 ### PayPal integration experience
 
