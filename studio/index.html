@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Raincheck — Batch preflight</title>
+  <link rel="stylesheet" href="/studio/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to batch workspace</a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Raincheck confirmation desk">
+      <svg viewBox="0 0 32 34" aria-hidden="true"><path d="M5 4h22v8a5 5 0 0 0 0 10v8H5v-8a5 5 0 0 0 0-10V4Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 12h8M12 17h8M12 22h5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      Raincheck<span class="brand-period">.</span>
+    </a>
+    <span class="header-note">Little Kiln Studio</span>
+    <a class="desk-link" href="/">Open confirmation desk</a>
+  </header>
+  <main id="workspace" class="workspace">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">Before you promise a place.</h1>
+        <p>Compare the whole cancellation, then review one family at a time.</p>
+      </div>
+      <div class="cancellation-slip">
+        <span>Cancelled workshop</span>
+        <strong id="workshop-name">Loading saved plans…</strong>
+        <span id="workshop-date"></span>
+      </div>
+    </section>
+    <div class="workspace-toolbar">
+      <div class="toolbar-actions">
+        <button id="refresh" class="button button-primary" type="button" disabled>Refresh saved plans</button>
+        <button id="clear" class="button button-quiet" type="button" disabled>Show all families</button>
+        <button id="analyst" class="button button-quiet" type="button" hidden>Ask batch reviewer</button>
+      </div>
+      <p id="sync-status" class="sync-status" role="status">Loading batch preflight…</p>
+    </div>
+    <p id="error" class="error-message" role="alert" hidden></p>
+    <p class="mobile-hint">Scroll across the workspace to review every column.</p>
+    <div class="studio-scroll" tabindex="0" aria-label="Scrollable batch review workspace">
+      <div id="studio" aria-label="Raincheck batch preflight"></div>
+    </div>
+    <p class="handoff-note">Open a booking link to review its saved plan in a new tab. Confirm there, then refresh this batch to read back the result.</p>
+  </main>
+  <footer class="site-footer">
+    <p>Internal AG Studio evaluation. Fictional workshop and families; <span id="payment-mode">simulated payments</span>.</p>
+    <a href="/">Return to the confirmation desk</a>
+  </footer>
+  <script src="/studio/vendor.js"></script>
+  <script type="module" src="/studio/app.js"></script>
+</body>
+</html>

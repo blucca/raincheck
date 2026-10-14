@@ -34,7 +34,7 @@ Raincheck puts a **whole cancelled class** on one desk: customer choices, places
 
 ## Run the complete app
 
-Requires Node.js 24.5+; developed with Node.js 26. The app uses built-in HTTP, SQLite, and fetch. Dependencies to install: **0**.
+Requires Node.js 24.5+; developed with Node.js 26. The core app uses built-in HTTP, SQLite, and fetch. Core dependencies to install: **0**. The optional AG Studio module has a separate SDK and licence.
 
 ```sh
 git clone https://github.com/blucca/raincheck.git
@@ -80,6 +80,14 @@ The default sandbox workspace has one fictional guest with a payment awaiting ca
 A captured ticket can be refunded in full. A multi-person booking can split between full ticket refunds and equal-price rebookings. `PayPal-Request-Id` is saved with the exact amount and capture before a refund call. Known refund IDs are reconciled by GET.
 
 **Sandbox verified — October 12, 2026 (UTC):** an account-connected run completed OAuth → $136 order → virtual buyer approval → capture → $68 refund → independent GET receipt. A newly worded reply used live Nebius AI, and a server restart preserved the completed case and replacement seat with zero holds. [Exact input, results, and public verification summary →](docs/sandbox-verification.md) Sandbox funds are virtual; the public preview uses simulated payments and recorded AI.
+
+### AG Studio batch preflight
+
+**Two families. One Sunday place.** Choose a make-up class in the native Studio filter, see its competing household plans, and open the existing confirmation desk. A custom seat-pressure widget keeps whole-batch availability beside the matching families' proposed, in-progress, and settled refunds. Refresh reads the result after a household settles.
+
+The optional local module uses **AG Studio 3.0.0** with your own valid licence. Its native Agent Framework can query the saved batch and filter the family queue through the existing budgeted model connection.
+
+[**Local setup and repeatable five-family example**](docs/batch-preflight.md)
 
 ## Scope
 

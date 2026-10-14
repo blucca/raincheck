@@ -8,7 +8,7 @@ const announcer = document.querySelector('#announcer');
 
 const state = {
   workspace: null,
-  selectedId: null,
+  selectedId: new URLSearchParams(location.search).get('booking'),
   drafts: new Map(),
   analyzedMessages: new Map(),
   pending: null,
@@ -423,6 +423,11 @@ function render() {
 function adoptWorkspace(workspace, reset = false) {
   if (!workspace || !Array.isArray(workspace.bookings)) throw new Error('The workspace response needs a booking list.');
   state.workspace = workspace;
+  const batchLink = document.querySelector('#batch-link');
+  if (batchLink) {
+    batchLink.hidden = !workspace.studio_url;
+    if (workspace.studio_url) batchLink.href = workspace.studio_url;
+  }
   if (!Array.isArray(workspace.cases)) workspace.cases = [];
   if (!Array.isArray(workspace.sessions)) workspace.sessions = [];
   if (reset) {

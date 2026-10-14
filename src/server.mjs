@@ -9,9 +9,15 @@ import { PayPalSandboxPayments } from './payments.mjs';
 import { reserveRaincheckBudget } from './budget.mjs';
 import { seed, sandboxSeed } from './seed.mjs';
 import { SandboxCheckout } from './sandbox-checkout.mjs';
+import { batchSnapshot } from './batch.mjs';
+import { toChatRequest } from '../studio/chat-adapter.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(root, 'public');
+const studioDir = path.join(root, 'studio');
+const studioBundle = process.env.RAINCHECK_STUDIO_BUNDLE;
+const studioKeyFile = process.env.RAINCHECK_STUDIO_LICENSE_FILE;
+const studioConfigured = Boolean(studioBundle && studioKeyFile);
 const port = Number(process.env.PORT || 4326);
 const sandboxConfigured = Boolean(process.env.PAYPAL_SANDBOX_CLIENT_ID && process.env.PAYPAL_SANDBOX_CLIENT_SECRET);
 const baseUrl = new URL(process.env.RAINCHECK_BASE_URL || `http://127.0.0.1:${port}`);
@@ -32,6 +38,8 @@ if (process.env.NEBIUS_API_KEY && process.env.NEBIUS_BUDGET_FILE) {
     } : undefined
   });
 }
+const studioAiConfigured = studioConfigured && process.env.RAINCHECK_STUDIO_AI === '1'
+  && interpreter.mode === 'live' && Boolean(process.env.RAINCHECK_BUDGET_FILE);
 const payments = sandboxConfigured
   ? new PayPalSandboxPayments({ clientId: process.env.PAYPAL_SANDBOX_CLIENT_ID, clientSecret: process.env.PAYPAL_SANDBOX_CLIENT_SECRET }) : undefined;
 const scenario = process.env.RAINCHECK_SCENARIO_FILE ? JSON.parse(fs.readFileSync(process.env.RAINCHECK_SCENARIO_FILE, 'utf8')) : sandboxConfigured ? sandboxSeed() : seed;
@@ -47,17 +55,18 @@ function checkoutFor(id = app.workspace().bookings[0]?.id) {
   }));
   return checkouts.get(id);
 }
-const workspace = () => ({ ...app.workspace(), sandbox_checkout: sandboxConfigured ? '/sandbox.html' : null });
+const workspace = () => ({ ...app.workspace(), sandbox_checkout: sandboxConfigured ? '/sandbox.html' : null,
+  studio_url: studioConfigured ? '/studio/' : null });
 
 const json = (res, status, value) => {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff' }); res.end(JSON.stringify(value));
 };
-async function body(req) {
+async function body(req, limit = 16000) {
   let text = '';
   for await (const chunk of req) {
     text += chunk;
-    if (Buffer.byteLength(text) > 16000) { const error = new Error('Use a shorter customer reply.'); error.status = 413; throw error; }
+    if (Buffer.byteLength(text) > limit) { const error = new Error(`Keep the JSON request under ${limit} bytes.`); error.status = 413; throw error; }
   }
   try { return text ? JSON.parse(text) : {}; }
   catch { const error = new Error('Send a JSON request body.'); error.status = 400; throw error; }
@@ -77,6 +86,19 @@ const server = http.createServer(async (req, res) => {
         if (origin && new URL(origin).host !== req.headers.host) return json(res, 403, { error: 'origin', message: 'Use the Raincheck application origin.' });
       }
       if (req.method === 'GET' && url.pathname === '/api/workspace') return json(res, 200, workspace());
+      if (req.method === 'GET' && url.pathname === '/api/batch') return json(res, 200, batchSnapshot(app.workspace()));
+      if (req.method === 'GET' && url.pathname === '/api/studio/config') {
+        if (!studioConfigured) return json(res, 503, { message: 'Set RAINCHECK_STUDIO_BUNDLE and RAINCHECK_STUDIO_LICENSE_FILE, then restart the local app.' });
+        return json(res, 200, { license_key: fs.readFileSync(studioKeyFile, 'utf8').trim(), ai_available: studioAiConfigured });
+      }
+      if (req.method === 'POST' && url.pathname === '/api/studio/llm') {
+        if (!studioAiConfigured) return json(res, 503, { message: 'Enable RAINCHECK_STUDIO_AI with a live model and both private credit budgets.' });
+        const input = await body(req, 128000);
+        if (!Array.isArray(input?.input)) return json(res, 400, { message: 'Send a Studio conversation input array.' });
+        const request = { ...toChatRequest(input, interpreter.options.model),
+          max_tokens: 1800, temperature: 0.2, reasoning_effort: 'low' };
+        return json(res, 200, await interpreter.complete(request));
+      }
       if (req.method === 'GET' && url.pathname === '/api/status') return json(res, 200, { version: '0.2.0', mode: app.workspace().mode });
       if (url.pathname === '/api/sandbox' && req.method === 'GET') {
         const checkout = checkoutFor(url.searchParams.get('booking') || undefined);
@@ -108,9 +130,17 @@ const server = http.createServer(async (req, res) => {
       return json(res, 404, { error: 'route_missing', message: 'Choose a Raincheck workspace action.' });
     }
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); return res.end(); }
+    if (url.pathname === '/studio') { res.writeHead(302, { Location: '/studio/' }); return res.end(); }
+    if (url.pathname === '/studio/vendor.js' && studioConfigured) {
+      res.writeHead(200, { 'Content-Type': mime['.js'], 'X-Content-Type-Options': 'nosniff' });
+      if (req.method === 'HEAD') return res.end();
+      return fs.createReadStream(studioBundle).on('error', () => res.destroy()).pipe(res);
+    }
     const shared = /^\/src\/(browser-api|engine-core|seed|recorded|policy|payments|interpreter)\.mjs$/.test(url.pathname);
-    const baseDir = shared ? root : publicDir;
-    const filename = path.resolve(baseDir, `.${decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname)}`);
+    const studioFile = url.pathname.startsWith('/studio/');
+    const baseDir = studioFile ? studioDir : shared ? root : publicDir;
+    const pathname = studioFile ? url.pathname.slice('/studio'.length) : url.pathname;
+    const filename = path.resolve(baseDir, `.${decodeURIComponent(pathname === '/' ? '/index.html' : pathname)}`);
     if (!filename.startsWith(baseDir + path.sep)) { res.writeHead(403); return res.end(); }
     if (!fs.existsSync(filename) || !fs.statSync(filename).isFile()) { res.writeHead(404); return res.end('Page unavailable'); }
     res.writeHead(200, { 'Content-Type': mime[path.extname(filename)] || 'application/octet-stream', 'X-Content-Type-Options': 'nosniff' });
