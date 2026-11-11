@@ -30,7 +30,7 @@ The application core uses Node.js’s built-in HTTP server, SQLite, and fetch, w
 
 PayPal anchors the original transaction. A three-step sandbox checkout creates the order, takes virtual-buyer approval, and captures payment. Raincheck reads the order and capture, matches the booking reference, amount, and currency, then saves that verified binding.
 
-Live NVIDIA Nemotron 3 Super 120B A12B on Nebius interprets a newly worded reply into structured ticket counts, a destination class, and an exact supporting quote. The application derives the action and calculates money in integer cents.
+The October film uses live NVIDIA Nemotron 3 Super 120B A12B on Nebius to interpret a newly worded reply into structured ticket counts, a destination class, and an exact supporting quote. Following its November 9 retirement, the current live configuration uses NVIDIA Nemotron 3 Ultra 550B A55B; the live interpreter and native Studio analyst were verified on November 11. The application derives the action and calculates money in integer cents.
 
 Execution saves the original capture, exact refund body, and unique `PayPal-Request-Id` while holding the replacement seat. That local transaction commits before the HTTP request. Recovery uses the saved operation and PayPal GET receipts; a known refund ID leads straight to its existing resource. A completed, matched receipt converts held seats into confirmed places.
 
@@ -76,7 +76,7 @@ Turn a cancelled class into confirmed next plans. AI reads each guest’s reply;
 
 ### Built with
 
-JavaScript, Node.js, SQLite, HTML, CSS, PayPal Orders API, PayPal Payments API, PayPal Sandbox, NVIDIA Nemotron 3 Super 120B A12B, Nebius Token Factory, AG Studio 3.0.0, AG Studio Agent Framework, GitHub Pages
+JavaScript, Node.js, SQLite, HTML, CSS, PayPal Orders API, PayPal Payments API, PayPal Sandbox, NVIDIA Nemotron 3 Super 120B A12B (October film), NVIDIA Nemotron 3 Ultra 550B A55B (current live), Nebius Token Factory, AG Studio 3.0.0, AG Studio Agent Framework, GitHub Pages
 
 ### Public project / website URL
 
@@ -108,7 +108,7 @@ The current workflow serves one merchant’s captured USD tickets, fixed ticket 
 
 ### AI tools and their uses
 
-- **NVIDIA Nemotron 3 Super 120B A12B on Nebius Token Factory:** live runtime interpretation of guest replies into structured transfer/refund counts, a target class, clarification state, and supporting quote. Application policy computes the monetary amount, validates capacity and ticket counts, and executes the teacher-approved outcome.
+- **NVIDIA Nemotron on Nebius Token Factory — Super 120B A12B in the October film, Ultra 550B A55B in the current live configuration:** live runtime interpretation of guest replies into structured transfer/refund counts, a target class, clarification state, and supporting quote. Application policy computes the monetary amount, validates capacity and ticket counts, and executes the teacher-approved outcome.
 - **AG Studio 3.0.0 and its Agent Framework:** native class filtering and household grid, a custom whole-batch seat-pressure widget, and a live analyst using `read_batch_snapshot` and `filter_makeup_session` to read exact totals and focus the review queue. Nemotron on Nebius supplies the analyst’s inference; the existing household desk executes operator-approved outcomes.
 - **OpenAI Codex / GPT-6 Astra:** AI-agent research, product and interface design, implementation, focused testing, documentation, and submission preparation. A human owner manages accounts and payments.
 - **Amazon Polly:** synthesized English narration for the final demo film.
@@ -139,7 +139,7 @@ The product is grounded in published booking-provider instructions and workshop 
 
 Raincheck uses the PayPal Sandbox and live AI in the core cancelled-class workflow. PayPal Orders v2 creates a two-ticket $136 order, obtains virtual-buyer approval, and captures payment. Independent order and capture GET calls verify the booking reference, amount, currency, and completed capture before the cancellation workspace accepts that payment.
 
-NVIDIA Nemotron 3 Super 120B A12B, hosted by Nebius Token Factory, interprets a newly worded guest reply into per-ticket transfer/refund intent and an exact supporting quote. Application policy checks quantities and replacement-seat capacity, derives the action, and computes the refund in integer cents. The operator reviews and approves the result.
+The October film uses NVIDIA Nemotron 3 Super 120B A12B, hosted by Nebius Token Factory, to interpret a newly worded guest reply into per-ticket transfer/refund intent and an exact supporting quote. Application policy checks quantities and replacement-seat capacity, derives the action, and computes the refund in integer cents. The operator reviews and approves the result. Following the November 9 Super retirement, the current live configuration uses NVIDIA Nemotron 3 Ultra 550B A55B. The November 11 live interpreter and native Studio analyst verification is documented at https://github.com/blucca/raincheck/blob/main/docs/live-verification-20261111.md .
 
 PayPal Payments v2 then refunds one complete $68 ticket against the original two-ticket capture while the other guest takes the last replacement place. A durable operation saves the exact request and PayPal-Request-Id before the call. Raincheck verifies the refund receipt against the original capture and operation, then confirms the held seat and saves the customer-message draft. Interrupted responses remain recoverable from the saved operation and GET receipts.
 

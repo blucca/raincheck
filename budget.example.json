@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "model": "nvidia/nemotron-3-super-120b-a12b",
-  "inputUsdPerMillion": 0.3,
-  "outputUsdPerMillion": 0.9,
+  "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+  "inputUsdPerMillion": 1,
+  "outputUsdPerMillion": 3,
   "approvedUsd": 0,
   "confirmedCreditsUsd": 0,
   "creditReserveUsd": 0,

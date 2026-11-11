@@ -53,7 +53,7 @@ Focused checks cover cancellation outcomes, restart recovery, seat capacity, exa
 
 ### Live AI
 
-The interpreter calls an OpenAI-compatible structured-output endpoint. The demonstrated model is **NVIDIA Nemotron 3 Super 120B A12B on Nebius Token Factory**.
+The interpreter calls an OpenAI-compatible structured-output endpoint. The October film used **NVIDIA Nemotron 3 Super 120B A12B on Nebius Token Factory**. Following its November 9 retirement, the live configuration uses **NVIDIA Nemotron 3 Ultra 550B A55B**; the environment example and both private budgets must use the same model ID and current token prices. Recorded examples retain their original model outputs. [Current live interpreter and native Studio verification](docs/live-verification-20261111.md).
 
 Copy `.env.example` to a private environment file and configure the model values. Create two private budgets from `budget.example.json`: `NEBIUS_BUDGET_FILE` for the account-wide allowance and `RAINCHECK_BUDGET_FILE` for Raincheck's own cap. Supply the account's confirmed credit allowance, chosen caps, model prices, and expiry. Every model request reserves its maximum cost durably in both budgets before HTTP; missing or exhausted budgets stop the request. The sample budget starts inactive.
 

@@ -29,7 +29,7 @@ if (process.env.NEBIUS_API_KEY && process.env.NEBIUS_BUDGET_FILE) {
   interpreter = new LiveInterpreter({
     apiKey: process.env.NEBIUS_API_KEY,
     baseUrl: process.env.NEBIUS_BASE_URL || 'https://api.tokenfactory.us-central1.nebius.com/v1',
-    model: process.env.NEBIUS_MODEL || 'nvidia/nemotron-3-super-120b-a12b',
+    model: process.env.NEBIUS_MODEL || 'nvidia/Nemotron-3-Ultra-550b-a55b',
     reserve: reserveRaincheckBudget,
     onResponse: process.env.RAINCHECK_MODEL_LOG_DIR ? response => {
       const dir = path.resolve(process.env.RAINCHECK_MODEL_LOG_DIR);

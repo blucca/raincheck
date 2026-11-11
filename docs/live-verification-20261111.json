@@ -1,0 +1,46 @@
+{
+  "checked_at": "2026-11-11T10:26:14.201166+08:00",
+  "environment": {
+    "node": "26.12.0",
+    "ag_studio": "3.0.0",
+    "model": "nvidia/Nemotron-3-Ultra-550b-a55b",
+    "dataset": "five fictional households with scripted initial plans",
+    "payments": "simulated"
+  },
+  "studio": {
+    "matching": "2 of 5",
+    "booking_links": [
+      "Review mina",
+      "Review elliot"
+    ],
+    "native_filter_applied": true,
+    "completed": true
+  },
+  "customer": {
+    "http": 200,
+    "reply": "My sister can take Sunday at the wheel; please refund my own ticket in full. That's one place and one refund for our two-person booking.",
+    "status": "ready",
+    "plan": {
+      "action": "split",
+      "evidence": "My sister can take Sunday at the wheel; please refund my own ticket in full. That's one place and one refund for our two-person booking.",
+      "explanation": "Customer requests a split: one ticket transferred to 'Sunday at the wheel' (s-sun18) and one full refund for the two-person booking.",
+      "question": "",
+      "currency": "USD",
+      "source": "live",
+      "transfer_quantity": 1,
+      "refund_quantity": 1,
+      "target_session_id": "s-sun18",
+      "refund_amount": 6800,
+      "original_quantity": 2,
+      "unit_amount": 6800
+    }
+  },
+  "recovery": {
+    "same_operation": true,
+    "status": "completed",
+    "sunday_booked": 8,
+    "sunday_held": 0,
+    "settled_refund_cents": 6800
+  },
+  "page_errors": []
+}
